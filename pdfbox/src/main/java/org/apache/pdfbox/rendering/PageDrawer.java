@@ -1358,7 +1358,9 @@ public class PageDrawer extends PDFGraphicsStreamEngine
                 int h = Math.round(image.getHeight() * scaleY);
                 if (w < 1 || h < 1)
                 {
-                    graphics.drawImage(image, imageTransform, null);
+                    if (AffineTransformImageValidator.isAffineTransformValid(graphics, image, imageTransform)) {
+                        graphics.drawImage(image, imageTransform, null);
+                    }
                     return;
                 }
                 Image imageToDraw = image.getScaledInstance(w, h, Image.SCALE_SMOOTH);
@@ -1368,10 +1370,12 @@ public class PageDrawer extends PDFGraphicsStreamEngine
                 imageTransform.scale(1f / w * image.getWidth(), 1f / h * image.getHeight());
                 imageTransform.preConcatenate(originalTransform);
                 graphics.setTransform(new AffineTransform());
-                graphics.drawImage(imageToDraw, imageTransform, null);
+                if (AffineTransformImageValidator.isAffineTransformValid(graphics, image, imageTransform)) {
+                    graphics.drawImage(imageToDraw, imageTransform, null);
+                }
                 graphics.setTransform(originalTransform);
             }
-            else
+            else if (AffineTransformImageValidator.isAffineTransformValid(graphics, image, imageTransform))
             {
                 graphics.drawImage(image, imageTransform, null);
             }
